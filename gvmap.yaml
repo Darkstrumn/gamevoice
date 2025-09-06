@@ -1,0 +1,54 @@
+bindings:
+  # Channels on/off . map to hotkeys or OBS scene logic
+  chan1_on:  { type: key,  keys: ["KEY_F13"] }
+  chan1_off: { type: key,  keys: ["KEY_F23"] }
+
+  chan2_on:  { type: key,  keys: ["KEY_F14"] }
+  chan2_off: { type: key,  keys: ["KEY_F24"] }
+
+  chan3_on:  { type: key,  keys: ["KEY_F15"] }
+  chan3_off: { type: key,  keys: ["KEY_F21"] }
+
+  chan4_on:  { type: key,  keys: ["KEY_F16"] }
+  chan4_off: { type: key,  keys: ["KEY_F22"] }
+
+  # All/Team (mutually exclusive per device logic)
+  all_on:    { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F17"] }
+  all_off:   { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F7"]  }
+
+  team_on:   { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F18"] }
+  team_off:  { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F8"]  }
+
+  # Command (exclusive while on)
+  command_on:  { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F19"] }   # e.g. PTT down or "production mode"
+  command_off: { type: key,  keys: ["KEY_LEFTCTRL", "KEY_F9"]  }   # e.g. PTT up or exit mode
+
+  # Mute (latched)
+  mute_on:   { type: shell, cmd: "pactl set-source-mute @DEFAULT_SOURCE@ 1" }
+  mute_off:  { type: shell, cmd: "pactl set-source-mute @DEFAULT_SOURCE@ 0" }
+
+  # Optional: state hooks for dashboards (mask values you care about)
+  mask_00: { type: shell, cmd: "echo idle > /tmp/gv_state" }
+  mask_40: { type: shell, cmd: "echo command > /tmp/gv_state" }
+  mask_80: { type: shell, cmd: "echo mute > /tmp/gv_state" }
+
+  # Hit a Node-RED endpoint only when Command toggles on
+  command_on:
+    type: http
+    url: "http://127.0.0.1:1880/gv/command"
+    json: { "state": "on" }
+
+  command_off:
+    type: http
+    url: "http://127.0.0.1:1880/gv/command"
+    json: { "state": "off" }
+
+  # MQTT example (if broker enabled)
+  mute_on:
+    type: mqtt
+    topic: "gv/mute"
+    json: { "mute": true }
+  mute_off:
+    type: mqtt
+    topic: "gv/mute"
+    json: { "mute": false }
