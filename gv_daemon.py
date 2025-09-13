@@ -91,22 +91,6 @@ def decode_edges(prev_mask: int, curr_mask: int):
             events.append((f"{base}_{edge}", bit, edge))
     return events
 
-def decode_edges0(prev_mask: int, curr_mask: int):
-    """
-    Return a list of (event_name, edge) for every bit that changed.
-    edge is "on" if bit now set, "off" if bit now cleared.
-    """
-    events = []
-    print ()
-    changed = prev_mask ^ curr_mask
-    for bit, base in BIT_NAMES.items():
-        if changed & bit:
-            edge = "on" if (curr_mask & bit) else "off"
-            events.append((f"{base}_{edge}", edge))
-    # Optional: also emit the aggregate mask for dashboards/logic
-    events.append((f"mask_{curr_mask:02x}", "state"))
-    return events
-
 def active_set(mask: int):
     """Return list of active flag names in stable order."""
     names = []
@@ -245,10 +229,10 @@ def main():
                     print(f"[GV] {ev_name:12s}  . state {fmt_mask(curr)}")
 
                     # emit to Node-RED (and/or MQTT)
-                    emit_to_nodered(ev_name, edge, curr)
+                    # emit_to_nodered(ev_name, edge, curr)
                     # emit_mqtt({"event": ev_name, "edge": edge, "mask": curr, "active": active_set(curr), "ts": time.time()})
 
-                    # Dispatch action if bound
+                    # Dispatch action if bound (defined in map file)
                     spec = bindings.get(ev_name)
                     if spec:
                         do_action(ui, spec)
