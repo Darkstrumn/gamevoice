@@ -13,7 +13,7 @@ REPORT_LEN = 8                      # many legacy HIDs use 8; change to 16/32/64
 MAP_FILE = "gvmap.yaml"             # same mapping file as before
 
 # ---- Node-RED / MQTT config ----
-NR_ENABLED     = True
+NR_ENABLED     = False
 NR_URL         = "http://127.0.0.1:1880/gv/event"  # set to your Node-RED HTTP In endpoint
 NR_AUTH_HEADER = None  # e.g., {"Authorization": "Bearer <token>"} if you secure it
 
@@ -229,8 +229,8 @@ def main():
                     print(f"[GV] {ev_name:12s}  . state {fmt_mask(curr)}")
 
                     # emit to Node-RED (and/or MQTT)
-                    # emit_to_nodered(ev_name, edge, curr)
-                    # emit_mqtt({"event": ev_name, "edge": edge, "mask": curr, "active": active_set(curr), "ts": time.time()})
+                    emit_to_nodered(ev_name, edge, curr)
+                    emit_mqtt({"event": ev_name, "edge": edge, "mask": curr, "active": active_set(curr), "ts": time.time()})
 
                     # Dispatch action if bound (defined in map file)
                     spec = bindings.get(ev_name)
